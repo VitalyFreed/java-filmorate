@@ -16,7 +16,7 @@ import java.util.HashMap;
 public class FilmController {
     private static int filmId = 1;
     private HashMap<Integer, Film> films = new HashMap<>();
-    private final int DESCRIPTION_MAX_LENGTH = 200;
+    private final int descriptionMaxLength = 200;
     private final static Logger log = LoggerFactory.getLogger(FilmController.class);
 
     private void validateFilm(Film film) {
@@ -25,9 +25,9 @@ public class FilmController {
             throw new ValidateException("Название не может быть пустым");
         }
 
-        if (film.getDescription().length() > DESCRIPTION_MAX_LENGTH) {
+        if (film.getDescription().length() > descriptionMaxLength) {
             log.warn("Валидация не пройдена");
-            throw new ValidateException("Максимальная длина описания — " + DESCRIPTION_MAX_LENGTH + " символов");
+            throw new ValidateException("Максимальная длина описания — " + descriptionMaxLength + " символов");
         }
 
         if (film.getDuration() <= 0) {
