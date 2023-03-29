@@ -2,10 +2,13 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,7 +16,7 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private static int filmId = 0;
+    private static int filmId = 1;
     private HashMap<Integer, Film> films = new HashMap<>();
     private final int DESCRIPTION_MAX_LENGTH = 200;
     private final static Logger log = LoggerFactory.getLogger(FilmController.class);
@@ -35,8 +38,16 @@ public class FilmController {
         }
 
         String[] splitedReleaseDate = film.getReleaseDate().split("-");
+        LocalDateTime localDateTime = LocalDateTime.of
+                (
+                        Integer.parseInt(splitedReleaseDate[0]),
+                        Integer.parseInt(splitedReleaseDate[1]),
+                        Integer.parseInt(splitedReleaseDate[2]),
+                        0,
+                        0
+                );
 
-        if (new Date(Integer.parseInt(splitedReleaseDate[0]), Integer.parseInt(splitedReleaseDate[1]), Integer.parseInt(splitedReleaseDate[2])).before(new Date(28, 12, 1895))) {
+        if (localDateTime.isBefore(LocalDateTime.of(1895, 12, 28, 0, 0))) {
             log.warn("Валидация не пройдена");
             throw new ValidateException("Дата релиза — не раньше 28 декабря 1895 года");
         }
@@ -48,23 +59,32 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film addFilm(@RequestBody Film film) {
-        validateFilm(film);
+    public ResponseEntity<Film> addFilm(@RequestBody Film film) {
+        try {
+            validateFilm(film);
 
-        film.setId(filmId++);
-        films.put(film.getId(), film);
-        log.info("Фильм успешно добавлен");
+            film.setId(filmId++);
+            films.put(film.getId(), film);
+            log.info("Фильм успешно добавлен");
+        } catch (ValidateException ex) {
+            System.out.println(ex.getMessage());
+            return ResponseEntity.status(500).body(film);
+        }
 
-        return film;
+        return ResponseEntity.status(200).body(film);
     }
 
     @PutMapping
-    public Film updateFilm(@RequestBody Film film) {
+    public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
+        if (!films.containsKey(film.getId())) {
+            return ResponseEntity.status(404).body(film);
+        }
+
         validateFilm(film);
 
         films.put(film.getId(), film);
         log.info("Фильм успешно обновлен");
 
-        return film;
+        return ResponseEntity.status(200).body(film);
     }
 }

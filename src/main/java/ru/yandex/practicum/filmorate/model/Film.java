@@ -8,5 +8,5 @@ public class Film {
     private String name;
     private String description;
     private String releaseDate;
-    double duration;
+    private double duration;
 }
