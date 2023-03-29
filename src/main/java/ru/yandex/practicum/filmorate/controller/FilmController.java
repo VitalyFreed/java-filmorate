@@ -6,11 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 
 @RestController
@@ -38,8 +36,7 @@ public class FilmController {
         }
 
         String[] splitedReleaseDate = film.getReleaseDate().split("-");
-        LocalDateTime localDateTime = LocalDateTime.of
-                (
+        LocalDateTime localDateTime = LocalDateTime.of(
                         Integer.parseInt(splitedReleaseDate[0]),
                         Integer.parseInt(splitedReleaseDate[1]),
                         Integer.parseInt(splitedReleaseDate[2]),

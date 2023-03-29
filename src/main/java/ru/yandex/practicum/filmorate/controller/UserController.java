@@ -47,8 +47,7 @@ public class UserController {
 
 
         String[] splitedBirthday = user.getBirthday().split("-");
-        LocalDateTime localDateTime = LocalDateTime.of
-                (
+        LocalDateTime localDateTime = LocalDateTime.of(
                         Integer.parseInt(splitedBirthday[0]),
                         Integer.parseInt(splitedBirthday[1]),
                         Integer.parseInt(splitedBirthday[2]),
