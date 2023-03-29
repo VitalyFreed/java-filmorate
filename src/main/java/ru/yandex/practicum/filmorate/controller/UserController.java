@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class UserController {
     private static int userId = 1;
     private HashMap<Integer, User> users = new HashMap<>();
-    private final static Logger log = LoggerFactory.getLogger(FilmController.class);
+    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
     private void validateUser(User user) throws ValidateException {
         for (User userItem : users.values()) {
