@@ -16,8 +16,8 @@ import java.util.HashMap;
 public class FilmController {
     private static int filmId = 1;
     private HashMap<Integer, Film> films = new HashMap<>();
-    private final int descriptionMaxLength = 200;
     private final static Logger log = LoggerFactory.getLogger(FilmController.class);
+    private final int descriptionMaxLength = 200;
 
     private void validateFilm(Film film) {
         if (film.getName() == null || film.getName().isBlank()) {
