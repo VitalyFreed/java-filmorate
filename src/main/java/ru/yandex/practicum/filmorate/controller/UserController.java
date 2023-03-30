@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.HashMap;
 import java.time.LocalDateTime;
@@ -14,9 +15,9 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private static int userId = 1;
+    private int userId = 1;
     private HashMap<Integer, User> users = new HashMap<>();
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
+    private final Logger log = LoggerFactory.getLogger(FilmController.class);
 
     private void validateUser(User user) throws ValidateException {
         for (User userItem : users.values()) {
@@ -29,22 +30,6 @@ public class UserController {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            log.warn("Валидация не пройдена");
-            throw new ValidateException("Электронная почта не может быть пустой");
-        }
-
-        if (!user.getEmail().contains("@")) {
-            log.warn("Валидация не пройдена");
-            throw new ValidateException("Электронная почта должна содержать символ @");
-        }
-
-        if (user.getLogin() == null || user.getLogin().isBlank()) {
-            log.warn("Валидация не пройдена");
-            throw new ValidateException("Логин не может быть пустым и содержать пробелы");
-        }
-
 
         String[] splitedBirthday = user.getBirthday().split("-");
         LocalDateTime localDateTime = LocalDateTime.of(
@@ -62,12 +47,12 @@ public class UserController {
     }
 
     @GetMapping
-    public Collection<User> getUsers() {
-        return users.values();
+    public ResponseEntity<Collection<User>> getUsers() {
+        return ResponseEntity.status(200).body(users.values());
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(@RequestBody User user) {
+    public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
         try {
             validateUser(user);
 
@@ -90,7 +75,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User user) {
+    public User updateUser(@Valid @RequestBody User user) {
         validateUser(user);
 
         users.put(user.getId(), user);

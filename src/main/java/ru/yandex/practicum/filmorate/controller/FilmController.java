@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,17 +15,12 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private static int filmId = 1;
+    private int filmId = 1;
     private HashMap<Integer, Film> films = new HashMap<>();
     private final int descriptionMaxLength = 200;
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
+    private final Logger log = LoggerFactory.getLogger(FilmController.class);
 
     private void validateFilm(Film film) {
-        if (film.getName() == null || film.getName().isBlank()) {
-            log.warn("Валидация не пройдена");
-            throw new ValidateException("Название не может быть пустым");
-        }
-
         if (film.getDescription().length() > descriptionMaxLength) {
             log.warn("Валидация не пройдена");
             throw new ValidateException("Максимальная длина описания — " + descriptionMaxLength + " символов");
@@ -51,12 +47,12 @@ public class FilmController {
     }
 
     @GetMapping
-    public Collection<Film> getFilms() {
-        return films.values();
+    public ResponseEntity<Collection<Film>> getFilms() {
+        return ResponseEntity.status(200).body(films.values());
     }
 
     @PostMapping
-    public ResponseEntity<Film> addFilm(@RequestBody Film film) {
+    public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
         try {
             validateFilm(film);
 
@@ -72,7 +68,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
+    public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
         if (!films.containsKey(film.getId())) {
             return ResponseEntity.status(404).body(film);
         }
